@@ -34,22 +34,26 @@ def main():
     for query in queries:
         query = query.rstrip()
         output_file.write(query+"\n")
-        print(query)
-        answers = myResolver.query(query, "A")
+        #print(query)
         try:
+            answersA = myResolver.query(query, "A")
             output_file.write("A records:"+"\n")
-            print("A records:")
-            for ip in answers:
-                output_file.write(str(ip)+"\n")
-                print(ip)
-            answers = myResolver.query(query, 'AAAA')
-            output_file.write("AAAA records:"+"\n")
-            print("AAAA records:")
-            for ip in answers:
+            #print("A records:")
+            for ip in answersA:
                 output_file.write(str(ip)+"\n")
                 print(ip)
         except:
             pass
+        try:
+            answersAAAA = myResolver.query(query, 'AAAA')
+            output_file.write("AAAA records:"+"\n")
+            #print("AAAA records:")
+            for ip in answersAAAA:
+                output_file.write(str(ip)+"\n")
+                print(ip)
+        except:
+            pass
+        
     
     output_file.close()
 
