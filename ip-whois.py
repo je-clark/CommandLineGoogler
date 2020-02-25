@@ -1,30 +1,31 @@
 import requests
 import sys
 import pprint
+import argparse
 
-help_text = '''
-ip-whois help:
+def print_info(data):
 
-ip-whois querys the ARIN WhoIS database to return the company that owns a particular IP address.
+    print(f'IP address owner is {data.get("net").get("orgRef").get("@name")}')
 
-Usage:
+def main(ip):
 
-ip-whois <IP address> | Returns IP ownership info
-ip-whois --help       | Returns this message
-'''
-
-if sys.argv[1] == "--help":
-    print(help_text)
-    sys.exit()
-
-ip = sys.argv[1]
-
-
-head = {'Accept': r'application/json'}
-url = f'http://whois.arin.net/rest/ip/{ip}'
-r = requests.get(url, headers=head, verify=False)
-if r.status_code != 200:
-    raise Exception(f'Error code in response: {r.status_code}')
-else:
-    print(pprint.pprint(r.json()))
+    head = {'Accept': r'application/json'}
+    url = f'http://whois.arin.net/rest/ip/{ip}'
+    r = requests.get(url, headers=head, verify=False)
+    if r.status_code != 200:
+        raise Exception(f'Error code in response: {r.status_code}')
+    else:
+        print_info(r.json())
     
+if __name__ == "__main__":
+    desc = 'ip-whois queries the ARIN WhoIS database to return the company that owns a particular IP address'
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument('ip_addr', nargs='?', default=sys.stdin.buffer, help='IP address to query', action='store')
+    
+    args = parser.parse_args()
+
+    if type(args.ip_addr) is str:
+        main(args.ip_addr)
+    else:
+        ip = args.ip_addr.read().decode('ascii').rstrip()
+        main(ip)
